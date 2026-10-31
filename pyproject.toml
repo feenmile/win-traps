@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "win-traps"
+version = "0.1.0"
+description = "A catalog and Claude Code PreToolUse hook that catches Windows silent-damage traps in AI agent shell commands before they run."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Feenmile" }]
+keywords = ["windows", "claude-code", "hooks", "ai-agents", "git-bash", "msys2", "safety"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Operating System :: Microsoft :: Windows",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/feenmile/win-traps"
+Source = "https://github.com/feenmile/win-traps"
+
+[project.scripts]
+wintraps = "wintraps.cli:main"
+wintraps-hook = "wintraps.hook:main"
+
+[tool.setuptools]
+packages = ["wintraps"]
