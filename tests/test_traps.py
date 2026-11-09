@@ -293,6 +293,21 @@ class RealJunctionTests(unittest.TestCase):
             os.makedirs(os.path.join(self.wt, "d%d" % i))
         self.assertEqual(default_find_junctions(self.wt, max_entries=3), ([], False))
 
+    def test_depth_limit_reports_incomplete(self):
+        # Issue #1: a directory left unscanned at the depth limit must not be reported as clean.
+        os.makedirs(os.path.join(self.wt, "a", "b", "c"))
+        self.assertEqual(default_find_junctions(self.wt, max_depth=2), ([], False))
+
+    def test_finds_a_deep_junction_with_default_depth(self):
+        # Issue #1: a node_modules junction inside a nested package more than 6 levels down.
+        deep = os.path.join(self.wt, "packages", "a", "packages", "b", "packages", "c", "lib")
+        os.makedirs(deep)
+        link = os.path.join(deep, "node_modules")
+        self._junction(link)
+        found, complete = default_find_junctions(self.wt)
+        self.assertEqual(found, [link])
+        self.assertTrue(complete)
+
 
 if __name__ == "__main__":
     unittest.main()

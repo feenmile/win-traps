@@ -48,11 +48,12 @@ def is_junction_stat(st: os.stat_result) -> bool:
     return mount_point is not None and tag == mount_point
 
 
-def default_find_junctions(root: str, max_depth: int = 6, max_entries: int = 50000) -> Tuple[List[str], bool]:
+def default_find_junctions(root: str, max_depth: int = 64, max_entries: int = 50000) -> Tuple[List[str], bool]:
     """Find directory junctions under ``root``. Returns (junction paths, scan_complete).
 
-    Junctions are not descended into. ``.git`` is skipped. If the entry budget runs out the scan is
-    reported incomplete, so the caller can refuse rather than guess.
+    Junctions are not descended into. ``.git`` is skipped. If the entry budget runs out, or a
+    directory is left unscanned because it sits at ``max_depth``, the scan is reported incomplete,
+    so the caller can refuse rather than guess.
     """
     if os.name != "nt" or not os.path.isdir(root):
         return [], True
@@ -83,7 +84,9 @@ def default_find_junctions(root: str, max_depth: int = 6, max_entries: int = 500
                 continue
             if entry.name == ".git":
                 continue
-            if stat.S_ISDIR(st.st_mode) and depth + 1 < max_depth:
+            if stat.S_ISDIR(st.st_mode):
+                if depth + 1 >= max_depth:
+                    return found, False
                 stack.append((entry.path, depth + 1))
     return found, True
 

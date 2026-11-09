@@ -108,7 +108,7 @@ For a false positive, add the comment `wintraps:allow=<trap-id>` to the command,
   (or any agent) can write the same trap in a form the patterns miss, and the allow comment is a deliberate bypass.
 * **Context checks are cheap and partial.** The stash check runs `git status --porcelain` (5 second timeout) and
   stays silent when git cannot answer. The npm check looks for `package.json`/`node_modules` on disk. The
-  junction check scans the worktree to depth 6 and at most 50,000 entries; if it cannot finish it blocks and says so.
+  junction check scans the worktree to depth 64 and at most 50,000 entries; if it cannot finish (a budget runs out or a folder sits past the depth limit) it blocks and says so.
   The `python3` check trusts PATH as the hook process sees it.
 * **Python-code traps only see code inside the command** (`python -c`, a heredoc piped to Python). Code written to
   a `.py` file with an editor tool is not inspected.
